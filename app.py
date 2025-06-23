@@ -1,7 +1,23 @@
 from flask import Flask, request, jsonify
 import os
+from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    incoming_msg = request.values.get('Body', '').strip().lower()
+    resp = MessagingResponse()
+    msg = resp.message()
+
+    if incoming_msg == 'menu':
+        msg.body("Welcome to Centenary Bank! Choose:\n1. Balance\n2. Loan info\n3. Branch info\n4. Language\n5. Agent")
+    else:
+        msg.body("Sorry, I didn't understand. Type 'menu'.")
+
+    return str(resp)
+
+if __name__ == "__main__":
+    app.run()
 
 # Sample menu
 menu_text = """Welcome to Centenary Bank! How can I help you today?
